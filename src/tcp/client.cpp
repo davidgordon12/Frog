@@ -14,6 +14,7 @@ void Client::write() {
 	fprintf(stdout, "Enter message to send to the server: ");
 	while(char c = getchar() != '\n') {
 		buffer[res] = c;
+		res++;
 	}
 };
 
@@ -42,4 +43,13 @@ bool Client::send() {
 	close(sockfd);
 
 	return true;
+}
+
+
+int main() {
+	Client client;
+	if(client.send()) {
+		fprintf(stdout, "Client online... Sending data to port 8080");
+	}
+	return 0;
 }
