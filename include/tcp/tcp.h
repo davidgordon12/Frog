@@ -3,6 +3,7 @@
 
 namespace TCP {
 
+#define PORT 30000
 #define MAX_REQUESTS 25
 #define MAX_BYTES 4096
 
@@ -13,7 +14,6 @@ private:
 	int res = 0;
 	int sockfd = 0;
 	int newsockfd = 0;
-	int port = 8080;
 	char buffer[MAX_BYTES];
 };
 
@@ -24,10 +24,9 @@ private:
 	int res = 0;
 	int sockfd = 0;
 	int connfd = 0;
-	int port = 8080;
 	char buffer[MAX_BYTES];
 private:
-	void write();
+	void m_send();
 };
 
 }

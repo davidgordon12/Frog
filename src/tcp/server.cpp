@@ -24,18 +24,22 @@ bool Server::open() {
 	bzero((char*)&serv_addr, sizeof(serv_addr));
 
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = INADDR_ANY;
-	serv_addr.sin_port = htons(port);
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv_addr.sin_port = htons(PORT);
 
 	if(bind(sockfd, (const sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
 		fprintf(stderr, "Unable to bind the socket");
 		return false;
 	}
 
-	listen(sockfd, MAX_REQUESTS);
-	newsockfd = accept(sockfd, (sockaddr*)&cli_addr, (socklen_t*)sizeof(cli_addr));
+	if(listen(sockfd, MAX_REQUESTS) < 0) {
+		fprintf(stderr, "Unable to listen to the socket");
+		return false;
+	}
 
-	close(sockfd);
+	int len = sizeof(cli_addr);
+
+	newsockfd = accept(sockfd, (sockaddr*)&cli_addr, (socklen_t*)&len);
 
 	if(newsockfd < 0) {
 		fprintf(stderr, "Unable to accept the socket");
@@ -51,13 +55,14 @@ bool Server::open() {
 		return false;
 	}
 
-	res = write(newsockfd, buffer, MAX_BYTES);
+	res = write(newsockfd, buffer, MAX_BYTES-1);
 
 	if(res < 0) {
 		fprintf(stderr, "Unable to write to the socket");
 		return false;
 	}
 
+	close(sockfd);
 	close(newsockfd);
 
 	return true;

@@ -7,14 +7,19 @@
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
 
+
 using namespace TCP;
 
-void Client::write() {
-	bzero(buffer, sizeof(buffer));
-	fprintf(stdout, "Enter message to send to the server: ");
-	while(char c = getchar() != '\n') {
-		buffer[res] = c;
-		res++;
+void Client::m_send() {
+	for(;;) {
+		bzero(buffer, sizeof(buffer));
+		fprintf(stdout, "Enter message to send to the server: ");
+		int n = 0;
+		while((buffer[n++] = getchar()) != '\n');
+		write(sockfd, buffer, sizeof(buffer));
+		bzero(buffer, sizeof(buffer));
+		read(sockfd, buffer, sizeof(buffer));
+		fprintf(stdout, "Server: %s", buffer);
 	}
 };
 
@@ -33,12 +38,14 @@ bool Client::send() {
 
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
-	serv_addr.sin_port = htons(port);
+	serv_addr.sin_port = htons(PORT);
 
 	if(connect(sockfd, (const sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
 		fprintf(stderr, "Unable to connect to the socket");
 		return false;
 	}
+
+	m_send();
 
 	close(sockfd);
 
