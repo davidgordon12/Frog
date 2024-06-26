@@ -1,9 +1,13 @@
 CC = g++
-CCFLAGS = -I include -c
+CCFLAGS = -Iinclude
 
-tcp:
-	$(CC) $(CCFLAGS) src/tcp/server.cpp -o bin/server.o
-	$(CC) $(CCFLAGS) src/tcp/client.cpp -o bin/client.o
-	$(CC) $(CCFLAGS) src/main.cpp -o bin/main.o
-	$(CC) bin/*.o -o frog
+OBJS = bin/main.o \
+       bin/server.o \
 
+all: tcp_server tcp_client
+
+tcp_server:
+	$(CC) $(CCFLAGS) src/tcp/server.cpp src/main.cpp -o bin/frog
+
+tcp_client:
+	$(CC) $(CCFLAGS) src/tcp/client.cpp -o bin/test_client
