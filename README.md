@@ -1,4 +1,4 @@
 # Frog
 An HTTP/2 Framework 🐸
 
-Implementing HTTP/2 in C++
+Implementing a Linux dependent HTTP/2 server in C++
