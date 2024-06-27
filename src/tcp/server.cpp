@@ -46,21 +46,23 @@ bool Server::open() {
 		return false;
 	}
 
-	bzero(buffer, MAX_BYTES);
+    for(;;) {
+        bzero(buffer, MAX_BYTES);
 
-	res = read(newsockfd, &buffer, MAX_BYTES-1);
+        res = read(newsockfd, &buffer, sizeof(buffer));
 
-	if(res < 0) {
-		fprintf(stderr, "Unable to read from the socket");
-		return false;
-	}
+        if(res < 0) {
+            fprintf(stderr, "Unable to read from the socket");
+            return false;
+        }
 
-	res = write(newsockfd, buffer, MAX_BYTES-1);
+        res = write(newsockfd, buffer, sizeof(buffer));
 
-	if(res < 0) {
-		fprintf(stderr, "Unable to write to the socket");
-		return false;
-	}
+        if(res < 0) {
+            fprintf(stderr, "Unable to write to the socket");
+            return false;
+        }
+    }
 
 	close(sockfd);
 	close(newsockfd);

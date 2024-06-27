@@ -13,12 +13,18 @@ using namespace TCP;
 void Client::m_send() {
 	for(;;) {
 		bzero(buffer, sizeof(buffer));
+
 		fprintf(stdout, "Enter message to send to the server: ");
+
 		int n = 0;
 		while((buffer[n++] = getchar()) != '\n');
+
 		write(sockfd, buffer, sizeof(buffer));
+
 		bzero(buffer, sizeof(buffer));
+
 		read(sockfd, buffer, sizeof(buffer));
+
 		fprintf(stdout, "Server: %s", buffer);
 	}
 };
