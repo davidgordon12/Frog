@@ -1,6 +1,8 @@
 #ifndef _TCP_H
 #define _TCP_H
 
+#include <sys/socket.h>
+
 namespace TCP {
 
 #define PORT 30000
@@ -10,6 +12,8 @@ namespace TCP {
 class Server {
 public:
 	bool open();
+	bool serve();
+	void close_con();
 private:
 	int res = 0;
 	int sockfd = 0;

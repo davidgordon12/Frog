@@ -1,3 +1,0 @@
-make server
-
-./bin/frog

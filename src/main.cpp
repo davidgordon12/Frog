@@ -6,9 +6,13 @@ using namespace TCP;
 int main() {
 	Server server;
 
-	if(server.open()) {
-		fprintf(stdout, "Server open... Listening on port 8080");
+	bool is_open = server.open();
+
+	while(is_open) {
+		server.serve();
 	}
+
+	server.close_con();
 
 	return 0;
 }

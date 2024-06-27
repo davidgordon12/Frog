@@ -11,9 +11,8 @@
 using namespace TCP;
 
 bool Server::open() {
-	socklen_t clilen;
 	struct sockaddr_in serv_addr;
-	struct sockaddr_in cli_addr;
+
 	sockfd = socket(AF_INET, SOCK_STREAM, STDIN_FILENO);
 
 	if(sockfd < 0) {
@@ -32,6 +31,9 @@ bool Server::open() {
 		return false;
 	}
 
+	socklen_t clilen;
+	struct sockaddr_in cli_addr;
+
 	if(listen(sockfd, MAX_REQUESTS) < 0) {
 		fprintf(stderr, "Unable to listen to the socket");
 		return false;
@@ -46,26 +48,31 @@ bool Server::open() {
 		return false;
 	}
 
-    for(;;) {
-        bzero(buffer, MAX_BYTES);
+	return true;
+}
 
-        res = read(newsockfd, &buffer, sizeof(buffer));
+bool Server::serve() {
+	bzero(buffer, MAX_BYTES);
 
-        if(res < 0) {
-            fprintf(stderr, "Unable to read from the socket");
-            return false;
-        }
+	res = read(newsockfd, &buffer, sizeof(buffer));
 
-        res = write(newsockfd, buffer, sizeof(buffer));
+	if(res < 0) {
+		fprintf(stderr, "Unable to read from the socket");
+		return false;
+	}
 
-        if(res < 0) {
-            fprintf(stderr, "Unable to write to the socket");
-            return false;
-        }
-    }
+	res = write(newsockfd, buffer, sizeof(buffer));
 
-	close(sockfd);
-	close(newsockfd);
+	if(res < 0) {
+		fprintf(stderr, "Unable to write to the socket");
+		return false;
+	}
 
 	return true;
+}
+
+
+void Server::close_con() {
+	close(sockfd);
+	close(newsockfd);
 }
