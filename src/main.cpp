@@ -1,18 +1,10 @@
 #include <cstdio>
-#include <tcp/tcp.h>
+#include <http/http.h>
 
-using namespace TCP;
+using namespace HTTP;
 
 int main() {
 	Server server;
-
-	bool is_open = server.open();
-
-	while(is_open) {
-		server.serve();
-	}
-
-	server.close_con();
 
 	return 0;
 }
