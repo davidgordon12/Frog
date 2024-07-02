@@ -7,10 +7,11 @@ namespace HTTP {
 
 class Server {
 public:
-    res_t handle_request(req_t req);
+    std::string handle_request(const char* request);
 private:
+    std::string response_to_string(res_t res);
     void open_connection();
-    std::string handle_get(std::unique_ptr<std::string> path);
+    std::string handle_get(std::string path);
     res_t build_response(std::string path, std::string content);
 };
 }

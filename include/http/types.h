@@ -1,3 +1,6 @@
+#ifndef _TYPES_H
+#define _TYPES_H
+
 #include <string>
 
 typedef struct req_t {
@@ -18,3 +21,5 @@ typedef struct res_t {
     std::string type;
     std::string content;
 } res_t;
+
+#endif 

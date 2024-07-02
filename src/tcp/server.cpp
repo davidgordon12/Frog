@@ -1,3 +1,5 @@
+#include <http/http.h>
+#include <http/types.h>
 #include <tcp/tcp.h>
 #include <cstdio>
 #include <cstdlib>
@@ -7,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <string.h>
 
 using namespace TCP;
 
@@ -17,7 +20,7 @@ bool Server::open() {
 
 	if(sockfd < 0) {
 		fprintf(stderr, "Unable to open the socket");
-		return false;
+		exit(0);
 	}
 
 	bzero((char*)&serv_addr, sizeof(serv_addr));
@@ -28,7 +31,7 @@ bool Server::open() {
 
 	if(bind(sockfd, (const sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
 		fprintf(stderr, "Unable to bind the socket");
-		return false;
+		exit(0);
 	}
 
 	socklen_t clilen;
@@ -36,7 +39,7 @@ bool Server::open() {
 
 	if(listen(sockfd, MAX_REQUESTS) < 0) {
 		fprintf(stderr, "Unable to listen to the socket");
-		return false;
+		exit(0);
 	}
 
 	int len = sizeof(cli_addr);
@@ -45,7 +48,7 @@ bool Server::open() {
 
 	if(newsockfd < 0) {
 		fprintf(stderr, "Unable to accept the socket");
-		return false;
+		exit(0);
 	}
 
 	return true;
@@ -58,14 +61,22 @@ bool Server::serve() {
 
 	if(res < 0) {
 		fprintf(stderr, "Unable to read from the socket");
-		return false;
+		exit(0);
 	}
+
+	using namespace HTTP;
+
+	HTTP::Server server;
+
+	std::string response = server.handle_request((const char*)&buffer);
+
+	strcpy(buffer, (const char*)&response);
 
 	res = write(newsockfd, buffer, sizeof(buffer));
 
 	if(res < 0) {
 		fprintf(stderr, "Unable to write to the socket");
-		return false;
+		exit(0);
 	}
 
 	return true;
