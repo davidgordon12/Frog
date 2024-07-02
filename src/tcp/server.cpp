@@ -70,7 +70,9 @@ bool Server::serve() {
 
 	std::string response = server.handle_request((const char*)&buffer);
 
-	strcpy(buffer, (const char*)&response);
+	bzero(buffer, sizeof(buffer));
+
+	strcpy(buffer, response.c_str());
 
 	res = write(newsockfd, buffer, sizeof(buffer));
 
