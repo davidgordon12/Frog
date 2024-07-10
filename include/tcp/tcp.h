@@ -7,7 +7,7 @@ namespace TCP {
 
 #define PORT 30000
 #define MAX_REQUESTS 25
-#define MAX_BYTES 4096
+#define MAX_BYTES 1000000
 
 class Server {
 public:
