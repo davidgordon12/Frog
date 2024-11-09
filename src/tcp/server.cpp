@@ -68,13 +68,13 @@ bool Server::serve() {
 
 	HTTP::Server server;
 
-	std::string response = server.handle_request((const char*)&buffer);
+	res_t response = server.handle_request((const char*)&buffer);
 
 	bzero(buffer, sizeof(buffer));
 
-	strcpy(buffer, response.c_str());
+	strcpy(buffer, response.content.c_str());
 
-	res = write(newsockfd, buffer, sizeof(buffer));
+	res = write(newsockfd, buffer, response.length);
 
 	if(res < 0) {
 		fprintf(stderr, "Unable to write to the socket");
