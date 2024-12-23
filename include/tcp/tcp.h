@@ -11,28 +11,17 @@ namespace TCP {
 
 class Server {
 public:
-	bool open();
-	bool serve();
-	void close_con();
+	int open();
+	int bind2(int sockfd);
+	int accept2(int sockdf);
+	int listen2(int sockfd);
+	void serve(int sockfd);
+	void close_con(int sockfd);
 private:
 	int res = 0;
 	int sockfd = 0;
-	int newsockfd = 0;
 	char buffer[MAX_BYTES];
 };
-
-class Client {
-public:
-	bool send();
-private:
-	int res = 0;
-	int sockfd = 0;
-	int connfd = 0;
-	char buffer[MAX_BYTES];
-private:
-	void m_send();
-};
-
 }
 
 #endif // !_TCP_H

@@ -13,15 +13,21 @@
 
 using namespace TCP;
 
-bool Server::open() {
-	struct sockaddr_in serv_addr;
-
+int Server::open() {
 	sockfd = socket(AF_INET, SOCK_STREAM, STDIN_FILENO);
 
 	if(sockfd < 0) {
 		fprintf(stderr, "Unable to open the socket");
 		exit(0);
 	}
+
+	HTTP::Server::log("Created socket with file descriptor " + std::to_string(sockfd));
+	
+	return sockfd;
+}
+
+int Server::bind2(int sockfd) {
+	struct sockaddr_in serv_addr;
 
 	bzero((char*)&serv_addr, sizeof(serv_addr));
 
@@ -34,58 +40,64 @@ bool Server::open() {
 		exit(0);
 	}
 
-	socklen_t clilen;
-	struct sockaddr_in cli_addr;
+	HTTP::Server::log("Bound to socket with file descriptor " + std::to_string(sockfd));
 
+	return sockfd;
+}
+
+int Server::listen2(int sockfd) {
 	if(listen(sockfd, MAX_REQUESTS) < 0) {
 		fprintf(stderr, "Unable to listen to the socket");
 		exit(0);
 	}
 
+	HTTP::Server::log("Listening on port  " + std::to_string(PORT));
+
+	return sockfd;
+}
+
+int Server::accept2(int sockfd) {
+	socklen_t clilen;
+	struct sockaddr_in cli_addr;
+
 	int len = sizeof(cli_addr);
 
-	newsockfd = accept(sockfd, (sockaddr*)&cli_addr, (socklen_t*)&len);
+	int client_sockfd = accept(sockfd, (sockaddr*)&cli_addr, (socklen_t*)&len);
 
-	if(newsockfd < 0) {
+	if(client_sockfd < 0) {
 		fprintf(stderr, "Unable to accept the socket");
 		exit(0);
 	}
 
-	return true;
+	HTTP::Server::log("Accepted client socket with file descriptor " + std::to_string(client_sockfd));
+
+	return client_sockfd;
 }
 
-bool Server::serve() {
+void Server::serve(int sockfd) {
 	bzero(buffer, MAX_BYTES);
 
-	res = read(newsockfd, &buffer, sizeof(buffer));
+	res = read(sockfd, &buffer, sizeof(buffer));
 
 	if(res < 0) {
 		fprintf(stderr, "Unable to read from the socket");
 		exit(0);
 	}
 
-	using namespace HTTP;
-
-	HTTP::Server server;
-
-	res_t response = server.handle_request((const char*)&buffer);
-
 	bzero(buffer, sizeof(buffer));
 
-	strcpy(buffer, response.content.c_str());
+	std::string msg = "hi socket # " + std::to_string(sockfd) + "\0"; 
+	strcpy(buffer, msg.c_str());
 
-	res = write(newsockfd, buffer, response.length);
+	res = write(sockfd, buffer, strlen(buffer));
 
 	if(res < 0) {
 		fprintf(stderr, "Unable to write to the socket");
 		exit(0);
 	}
-
-	return true;
 }
 
 
-void Server::close_con() {
+void Server::close_con(int sockfd) {
 	close(sockfd);
-	close(newsockfd);
 }
